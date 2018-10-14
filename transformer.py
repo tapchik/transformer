@@ -1,10 +1,12 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 #Эта программа переводит (трансформирует) число из одной системы счисления в другую
 
 variables = {"number": "0", "base_0": 0, "base_1": 0}
 alphabet = {}
+Errors = {"UnwantedCharacters": "Число содержит недопустимые символы, повторите попытку ввода \n", 
+	   "WrongNumber": "Основание числа не соответствует введённым символам, повторите попытку ввода \n"}
 	
 def init_varibles():
 	
@@ -20,6 +22,21 @@ def init_varibles():
 	to_return["base_1"] = int(user_input)
 	
 	return to_return #returns new set of variables
+
+def correct_input (input, base):
+	
+	input = num_to_list(input)
+	if input == False:
+		print (Errors["UnwantedCharacters"])
+		return False
+	for i in input:
+		if int(i) < base:
+			pass
+		elif int(i) >= base:
+			print (Errors["WrongNumber"])
+			return False
+	return True
+
 
 def generate_alphabet (base_0, base_1):
 	
@@ -41,12 +58,15 @@ def generate_alphabet (base_0, base_1):
 def power(x, y): #возводит x в степень y
 	return int(x)**int(y)
 
-def num_to_list (num):
+def num_to_list (num): 
 	digits = [x for x in num]
 	for i in range(len(digits)): 
 		if ord(digits[i]) >= 65 and ord(digits[i]) <= 90:
 			digits[i] = ord(digits[i])-55
-		else: digits[i] = int(digits[i])
+		elif ord(digits[i]) >= 48 and ord(digits[i]) <= 57:
+			digits[i] = ord(digits[i])-48
+		else: 
+			return False
 	return digits
 
 def list_to_num (seq):
@@ -85,11 +105,14 @@ def transform_from_base10 (number, base_1):
 while True: 
 	
 	variables = init_varibles()
+	alphabet = generate_alphabet(variables["base_0"], variables["base_1"])
+	if correct_input (variables["number"], variables["base_0"]) == True: 
+		pass
+	else: 
+		continue
 
 	if variables["base_0"] != 10: 
 		variables["number"] = transform_to_base10 (variables["number"], variables["base_0"])
 	if variables["base_1"] != 10:
 		variables["number"] = transform_from_base10(variables["number"], variables["base_1"])
-	
-	print ("То же число с новым основанием:", variables["number"], "\n")
-
+	print ("То же число с новым основанием: " + variables["number"] + "\n")
